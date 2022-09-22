@@ -24694,7 +24694,7 @@ CREATE TABLE `users` (
   `disable_forced_effects` enum('0','1') NOT NULL DEFAULT '0',
   `allow_mimic` enum('1','0') NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`,`auth_ticket`),
-  UNIQUE KEY `id` (`id`) USING HASH,
+  UNIQUE KEY `id` (`id`) USING BTREE,
   UNIQUE KEY `username` (`username`) USING BTREE,
   KEY `rank` (`rank`),
   KEY `ip_last` (`ip_last`),
@@ -25038,15 +25038,12 @@ CREATE TABLE `wordfilter` (
 -- Records of wordfilter
 -- ----------------------------
 
--------------------------------
+-- -----------------------------
 -- SQL Updates
--------------------------------
+-- -----------------------------
 
 -- 1_UpdateRoomEntryTable
-ALTER TABLE `user_roomvisits` 
-	DROP COLUMN `minute`,
-	DROP COLUMN `hour`;
-
+-- Already applied in the original structure
 
 -- 2_AddMissingRoomColumns
 ALTER TABLE `rooms` 
@@ -25059,7 +25056,7 @@ ALTER TABLE `messenger_friendships` ADD PRIMARY KEY(`user_one_id`, `user_two_id`
 INSERT INTO `messenger_friendships` (`user_one_id`, `user_two_id`) SELECT `user_two_id`, `user_one_id` FROM `messenger_friendships`;
 ALTER TABLE `messenger_friendships` ADD `relationship` INT(1) NOT NULL DEFAULT '0' AFTER `user_two_id`;
 UPDATE `messenger_friendships` INNER JOIN `user_relationships` ON `messenger_friendships`.`user_one_id` = `user_relationships`.`user_id` AND `messenger_friendships`.`user_two_id` = `user_relationships`.`target` SET `messenger_friendships`.`relationship` = `type`;
-DROP TABLE ` user_relationships `;
+DROP TABLE `user_relationships`;
 
 -- 4_IgnoredUsersTable
 ALTER TABLE `user_ignores` DROP `id`;
